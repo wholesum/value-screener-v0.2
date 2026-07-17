@@ -1,1 +1,0 @@
-# value-screener-v0.2
