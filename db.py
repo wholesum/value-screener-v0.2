@@ -63,8 +63,35 @@ CREATE TABLE IF NOT EXISTS meta (
     value TEXT
 );
 """
+# NEW CODE
+# Add new columns if they don't exist (SQLite doesn't support IF NOT EXISTS for columns)
+def _add_column_if_not_exists(conn, table, column, coltype):
+    cur = conn.execute(f"PRAGMA table_info({table})")
+    cols = [row[1] for row in cur.fetchall()]
+    if column not in cols:
+        conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {coltype}")
 
+with get_conn() as conn:
+    _add_column_if_not_exists(conn, "summary", "commodity_ratio", "REAL")
+    _add_column_if_not_exists(conn, "summary", "commodity_ratio_mean", "REAL")
+    _add_column_if_not_exists(conn, "summary", "commodity_ratio_deviation_pct", "REAL")
+    _add_column_if_not_exists(conn, "summary", "currency_ratio", "REAL")
+    _add_column_if_not_exists(conn, "summary", "currency_ratio_mean", "REAL")
+    _add_column_if_not_exists(conn, "summary", "currency_ratio_deviation_pct", "REAL")
 
+def get_price_series_by_label(label: str):
+    """Return price series for a given commodity or currency label.
+       Assumes label matches the 'label' field in the summary table.
+       Not the most efficient but fine for batch runs.
+    """
+    with get_conn() as conn:
+        # Get the ticker for that label from the summary table
+        row = conn.execute("SELECT ticker FROM summary WHERE label = ? AND category IN ('commodity','currency')", (label,)).fetchone()
+        if not row:
+            return []
+        return get_price_series(row["ticker"])
+        
+#NEW CODE
 def init_db():
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     with get_conn() as conn:
