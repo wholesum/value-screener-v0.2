@@ -1,0 +1,56 @@
+name: Refresh market data
+
+# Runs populate.py on a schedule (unrestricted outbound internet, unlike
+# most free web hosts) and commits the refreshed data/market.db back to the
+# repo. PythonAnywhere (or wherever app.py is hosted) then just needs to
+# `git pull` to pick up the new data -- it never talks to Stooq/yfinance/FRED
+# itself.
+#
+# Manual trigger: open the GitHub mobile app -> this repo -> Actions ->
+# "Refresh market data" -> Run workflow. That's your "refresh from phone"
+# button, no custom infra required.
+
+on:
+  schedule:
+    - cron: "0 11 * * *"   # 11:00 UTC daily -- adjust to taste
+  workflow_dispatch: {}     # enables the manual "Run workflow" button
+
+permissions:
+  contents: write
+
+jobs:
+  populate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run populate.py
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python populate.py
+
+      - name: Commit updated database
+        # IMPORTANT: this amends the previous commit and force-pushes, rather
+        # than creating a brand new commit every day. market.db is a binary
+        # file that doesn't diff/compress well in git -- if every run added a
+        # new commit, .git history would grow by roughly one full DB size per
+        # day, forever, and eventually blow out disk quota on whatever's
+        # cloning this repo (e.g. PythonAnywhere's free 512MB limit). Amending
+        # keeps exactly one commit for the data, so history size stays flat.
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/market.db
+          if ! git diff --staged --quiet; then
+            git commit --amend --no-edit
+            git push --force
+          else
+            echo "No data changes, nothing to commit."
+          fi
