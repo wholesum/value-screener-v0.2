@@ -114,6 +114,9 @@ sectors:
   - {label: "20+ Year Treasuries (TLT)", ticker: "TLT", source: stooq, stooq_kind: equity, commodity: "Gold", currency: USD}
   - {label: "Inflation-Protected Treasuries (TIP)", ticker: "TIP", source: stooq, stooq_kind: equity, commodity: "Gold", currency: USD}
 
+  # ---- NEW: US Small Cap ----
+  - {label: "US Small-Cap (IWM)", ticker: "IWM", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+
 # -------------------------------------------------------------- country_etfs -
 country_etfs:
   - {label: "Japan", ticker: "EWJ", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: JPY}
@@ -241,6 +244,8 @@ currencies:
   - {code: PKR, label: "Pakistani Rupee", ticker: "PKRUSD=X", source: yfinance}
   - {code: BDT, label: "Bangladeshi Taka", ticker: "BDTUSD=X", source: yfinance}
   - {code: LKR, label: "Sri Lankan Rupee", ticker: "LKRUSD=X", source: yfinance}
+  # ---- NEW: US Dollar Index ----
+  - {code: USDX, label: "US Dollar Index", ticker: "UUP", source: yfinance}
 
 # ---------------------------------------------------------------- commodities
 commodities:
@@ -277,6 +282,10 @@ commodities:
   - {label: "Butter", ticker: "CB=F", source: yfinance}
   - {label: "Cheese", ticker: "CSC=F", source: yfinance}
   - {label: "Lumber", ticker: "LBR=F", source: yfinance}
+  # ---- NEW: Long-dated oil futures and base metals basket ----
+  - {label: "Oil (Long-Dated)", ticker: "USL", source: yfinance}
+  - {label: "Brent Oil (Long-Dated)", ticker: "BNO", source: yfinance}
+  - {label: "Base Metals Basket", ticker: "DBB", source: yfinance}
 
 # --------------------------------------------------------------- fred_series
 fred_series:
@@ -358,3 +367,7 @@ fred_series:
   - {label: "Coffee (IMF)", series_id: "PCOFFOTMUSDM"}
   - {label: "Cocoa (IMF)", series_id: "PCOCOUSDM"}
   - {label: "Sugar (IMF)", series_id: "PSUGAUSAUSDM"}
+
+  # ---- NEW: Macro indicators ----
+  - {label: "10y-2y Treasury Yield Spread", series_id: "T10Y2Y"}
+  - {label: "High Yield OAS", series_id: "BAMLH0A0HYM2"}
