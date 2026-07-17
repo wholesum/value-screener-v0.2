@@ -58,11 +58,14 @@ def convergence():
     config/tickers.yaml) and average them. All inputs are precomputed
     summary rows -- this is just arithmetic, no external calls, so it's
     safe to compute per-request.
+
+    Additionally, we now include the precomputed sector-vs-commodity and
+    sector-vs-currency deviations (stored in the sector's summary row) for
+    richer analysis.
     """
     try:
         cfg = load_config()
         commodity_rows = {r["label"]: r for r in db.get_summary("commodity")}
-        currency_rows = {r["label"]: r for r in db.get_summary("currency")}
         # currency_rows keyed by label; also index by code for convenience
         currency_by_code = {}
         for c in cfg.get("currencies", []):
@@ -102,6 +105,9 @@ def convergence():
                     "avg_deviation_pct": sum(vals) / len(vals),
                     "n_factors": len(vals),
                     "sentiment_label": sec_row["sentiment_label"],
+                    # New fields: sector vs commodity and sector vs currency
+                    "sector_commodity_ratio_deviation": sec_row.get("commodity_ratio_deviation_pct"),
+                    "sector_currency_ratio_deviation": sec_row.get("currency_ratio_deviation_pct"),
                 })
         results.sort(key=lambda r: r["avg_deviation_pct"])
         return jsonify(results)
