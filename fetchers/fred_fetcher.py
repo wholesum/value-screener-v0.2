@@ -13,7 +13,7 @@ import os
 import pandas as pd
 import requests
 
-FRED_API_KEY = os.environ.get("FRED_API_KEY", "")
+FRED_API_KEY = "a5eb5a40ad542ffb9d13f6fb6269ca08"
 FRED_BASE_URL = "https://api.stlouisfed.org/fred/series/observations"
 
 
