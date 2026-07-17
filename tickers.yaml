@@ -1,0 +1,360 @@
+# ==============================================================================
+# SINGLE SOURCE OF TRUTH for every instrument this tool tracks.
+#
+# DISK BUDGET NOTE (read this if you're tight on space, e.g. PythonAnywhere's
+# free 512MB quota): the biggest lever on data/market.db size isn't the
+# number of tickers, it's how much HISTORY each one pulls. `history_start_date`
+# below caps every fetch to that date forward. At the current ~300 instruments
+# and a 16-year cap, expect market.db to land somewhere around 60-90MB --
+# comfortable headroom against a 512MB quota that's already ~250MB used by
+# installed packages. If you add a lot more tickers, shorten this date first.
+# ==============================================================================
+
+gold_ticker: "GC=F"
+gold_source: "yfinance"
+history_start_date: "2010-01-01"   # nothing before this date is fetched or kept
+
+# ------------------------------------------------------------------ sectors --
+sectors:
+  # ---- Energy ----
+  - {label: "Energy (S&P)", ticker: "XLE", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: CAD}
+  - {label: "Oil Exploration (E&P)", ticker: "XOP", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: CAD}
+  - {label: "Oil Services", ticker: "OIH", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: CAD}
+  - {label: "Oil Equipment", ticker: "IEZ", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: CAD}
+  - {label: "Midstream Pipelines", ticker: "AMLP", source: stooq, stooq_kind: equity, commodity: "Natural Gas", currency: CAD}
+  - {label: "Natural Gas Producers", ticker: "FCG", source: stooq, stooq_kind: equity, commodity: "Natural Gas", currency: CAD}
+  - {label: "Refiners", ticker: "CRAK", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: CAD}
+  - {label: "Uranium (Global X)", ticker: "URA", source: stooq, stooq_kind: equity, commodity: null, currency: null}
+  - {label: "Uranium Miners (Sprott)", ticker: "URNM", source: stooq, stooq_kind: equity, commodity: null, currency: null}
+
+  # ---- Metals & Mining ----
+  - {label: "Metals & Mining", ticker: "XME", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: AUD}
+  - {label: "Global Miners", ticker: "PICK", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: AUD}
+  - {label: "Copper Miners", ticker: "COPX", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: AUD}
+  - {label: "Silver Miners", ticker: "SIL", source: stooq, stooq_kind: equity, commodity: "Silver", currency: AUD}
+  - {label: "Junior Silver Miners", ticker: "SILJ", source: stooq, stooq_kind: equity, commodity: "Silver", currency: AUD}
+  - {label: "Gold Miners", ticker: "GDX", source: stooq, stooq_kind: equity, commodity: "Gold", currency: AUD}
+  - {label: "Junior Gold Miners", ticker: "GDXJ", source: stooq, stooq_kind: equity, commodity: "Gold", currency: AUD}
+  - {label: "Junior Gold Explorers", ticker: "GOEX", source: stooq, stooq_kind: equity, commodity: "Gold", currency: AUD}
+  - {label: "Rare Earths", ticker: "REMX", source: stooq, stooq_kind: equity, commodity: null, currency: null}
+  - {label: "Lithium", ticker: "LIT", source: stooq, stooq_kind: equity, commodity: null, currency: null}
+  - {label: "Battery Materials", ticker: "BATT", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: AUD}
+  - {label: "Steel", ticker: "SLX", source: stooq, stooq_kind: equity, commodity: "Hot Rolled Coil Steel", currency: USD}
+  - {label: "Agriculture/Fertilizer", ticker: "MOO", source: stooq, stooq_kind: equity, commodity: "Corn", currency: USD}
+
+  # ---- Technology ----
+  - {label: "Technology (S&P)", ticker: "XLK", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Semiconductors (SMH)", ticker: "SMH", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Semiconductors (SOXX)", ticker: "SOXX", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Software (IGV)", ticker: "IGV", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Cybersecurity (CIBR)", ticker: "CIBR", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Cloud Computing (SKYY)", ticker: "SKYY", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Robotics (BOTZ)", ticker: "BOTZ", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Internet (FDN)", ticker: "FDN", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Fintech (FINX)", ticker: "FINX", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Genomics (ARKG)", ticker: "ARKG", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+
+  # ---- Financials ----
+  - {label: "Financials (S&P)", ticker: "XLF", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Regional Banks", ticker: "KRE", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Banks", ticker: "KBE", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Insurance", ticker: "KIE", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Brokers", ticker: "IAI", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+
+  # ---- Healthcare ----
+  - {label: "Healthcare (S&P)", ticker: "XLV", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Biotech (equal weight)", ticker: "XBI", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Biotech (IBB)", ticker: "IBB", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Medical Devices", ticker: "IHI", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Pharmaceuticals", ticker: "PJP", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+
+  # ---- Industrials ----
+  - {label: "Industrials (S&P)", ticker: "XLI", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Infrastructure", ticker: "PAVE", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: USD}
+  - {label: "Aerospace & Defense", ticker: "ITA", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Defense (PPA)", ticker: "PPA", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Transportation", ticker: "IYT", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: USD}
+  - {label: "Airlines", ticker: "JETS", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: USD}
+  - {label: "Autos", ticker: "CARZ", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Electric Vehicles (DRIV)", ticker: "DRIV", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: USD}
+  - {label: "Dry Bulk Shipping (BOAT)", ticker: "BOAT", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+
+  # ---- Consumer ----
+  - {label: "Consumer Discretionary (S&P)", ticker: "XLY", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Consumer Staples (S&P)", ticker: "XLP", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Retail", ticker: "XRT", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Travel", ticker: "AWAY", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+
+  # ---- Real Estate ----
+  - {label: "Real Estate (S&P)", ticker: "XLRE", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "US REITs", ticker: "VNQ", source: stooq, stooq_kind: equity, commodity: "Lumber", currency: USD}
+  - {label: "Residential REITs", ticker: "REZ", source: stooq, stooq_kind: equity, commodity: "Lumber", currency: USD}
+  - {label: "Global Real Estate", ticker: "REET", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Homebuilders", ticker: "ITB", source: stooq, stooq_kind: equity, commodity: "Lumber", currency: USD}
+  - {label: "Homebuilders 2", ticker: "XHB", source: stooq, stooq_kind: equity, commodity: "Lumber", currency: USD}
+  - {label: "Mortgage REITs", ticker: "REM", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+
+  # ---- Materials ----
+  - {label: "Materials (S&P)", ticker: "XLB", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: AUD}
+  - {label: "Global Materials", ticker: "MXI", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: AUD}
+  - {label: "Timber & Forestry", ticker: "WOOD", source: stooq, stooq_kind: equity, commodity: "Lumber", currency: CAD}
+
+  # ---- Communications ----
+  - {label: "Communication Services", ticker: "XLC", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Telecom & Media", ticker: "VOX", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+
+  # ---- Utilities ----
+  - {label: "Utilities (S&P)", ticker: "XLU", source: stooq, stooq_kind: equity, commodity: "Natural Gas", currency: USD}
+  - {label: "Electric Grid", ticker: "GRID", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: USD}
+  - {label: "Clean Energy (ICLN)", ticker: "ICLN", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Solar (TAN)", ticker: "TAN", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Water Resources (PHO)", ticker: "PHO", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+
+  # ---- Rates (for the rates-vs-metals ratio) ----
+  - {label: "20+ Year Treasuries (TLT)", ticker: "TLT", source: stooq, stooq_kind: equity, commodity: "Gold", currency: USD}
+  - {label: "Inflation-Protected Treasuries (TIP)", ticker: "TIP", source: stooq, stooq_kind: equity, commodity: "Gold", currency: USD}
+
+# -------------------------------------------------------------- country_etfs -
+country_etfs:
+  - {label: "Japan", ticker: "EWJ", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: JPY}
+  - {label: "China", ticker: "FXI", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: CNY}
+  - {label: "Brazil", ticker: "EWZ", source: stooq, stooq_kind: equity, commodity: "Soybeans", currency: BRL}
+  - {label: "India", ticker: "INDA", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: INR}
+  - {label: "Emerging Markets", ticker: "EEM", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: USD}
+  - {label: "Developed ex-US", ticker: "EFA", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: USD}
+  - {label: "Europe", ticker: "VGK", source: stooq, stooq_kind: equity, commodity: "Natural Gas", currency: EUR}
+  - {label: "Asia-Pacific", ticker: "VPL", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: USD}
+  - {label: "UK", ticker: "EWU", source: stooq, stooq_kind: equity, commodity: "Brent Crude", currency: GBP}
+  - {label: "Switzerland", ticker: "EWL", source: stooq, stooq_kind: equity, commodity: "Gold", currency: CHF}
+  - {label: "Canada", ticker: "EWC", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: CAD}
+  - {label: "Australia", ticker: "EWA", source: stooq, stooq_kind: equity, commodity: "Iron Ore 62%", currency: AUD}
+  - {label: "New Zealand", ticker: "ENZL", source: stooq, stooq_kind: equity, commodity: "Class III Milk", currency: NZD}
+  - {label: "Sweden", ticker: "EWD", source: stooq, stooq_kind: equity, commodity: null, currency: SEK}
+  - {label: "Norway", ticker: "ENOR", source: stooq, stooq_kind: equity, commodity: "Brent Crude", currency: NOK}
+  - {label: "Denmark", ticker: "EDEN", source: stooq, stooq_kind: equity, commodity: null, currency: DKK}
+  - {label: "Hong Kong", ticker: "EWH", source: stooq, stooq_kind: equity, commodity: null, currency: HKD}
+  - {label: "Singapore", ticker: "EWS", source: stooq, stooq_kind: equity, commodity: null, currency: SGD}
+  - {label: "South Korea", ticker: "EWY", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: KRW}
+  - {label: "Taiwan", ticker: "EWT", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: TWD}
+  - {label: "Indonesia", ticker: "EIDO", source: stooq, stooq_kind: equity, commodity: null, currency: IDR}
+  - {label: "Thailand", ticker: "THD", source: stooq, stooq_kind: equity, commodity: "Rice", currency: THB}
+  - {label: "Malaysia", ticker: "EWM", source: stooq, stooq_kind: equity, commodity: null, currency: MYR}
+  - {label: "Philippines", ticker: "EPHE", source: stooq, stooq_kind: equity, commodity: null, currency: PHP}
+  - {label: "Vietnam", ticker: "VNM", source: stooq, stooq_kind: equity, commodity: null, currency: VND}
+  - {label: "Poland", ticker: "EPOL", source: stooq, stooq_kind: equity, commodity: null, currency: PLN}
+  - {label: "Mexico", ticker: "EWW", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: MXN}
+  - {label: "Argentina", ticker: "ARGT", source: stooq, stooq_kind: equity, commodity: "Soybeans", currency: ARS}
+  - {label: "Chile", ticker: "ECH", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: CLP}
+  - {label: "Peru", ticker: "EPU", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: PEN}
+  - {label: "Turkey", ticker: "TUR", source: stooq, stooq_kind: equity, commodity: null, currency: TRY}
+  - {label: "Saudi Arabia", ticker: "KSA", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: SAR}
+  - {label: "South Africa", ticker: "EZA", source: stooq, stooq_kind: equity, commodity: "Gold", currency: ZAR}
+  - {label: "UAE", ticker: "UAE", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: AED}
+  - {label: "Qatar", ticker: "QAT", source: stooq, stooq_kind: equity, commodity: "Natural Gas", currency: QAR}
+  - {label: "Kuwait", ticker: "KWT", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: KWD}
+  - {label: "Israel", ticker: "EIS", source: stooq, stooq_kind: equity, commodity: null, currency: ILS}
+  - {label: "Eurozone", ticker: "EZU", source: stooq, stooq_kind: equity, commodity: "Natural Gas", currency: EUR}
+  - {label: "China A-shares", ticker: "KBA", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: CNY}
+  - {label: "Greece", ticker: "GREK", source: stooq, stooq_kind: equity, commodity: null, currency: EUR}
+  - {label: "Africa", ticker: "AFK", source: stooq, stooq_kind: equity, commodity: "Gold", currency: ZAR}
+  - {label: "Latin America", ticker: "ILF", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: BRL}
+  - {label: "Frontier Markets", ticker: "FM", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+
+# ---------------------------------------------------------------------------
+# Commodity ETFs (equities, not futures) -- Stooq-fetchable alternate/
+# cross-check source for the same exposure as `commodities` below.
+# ---------------------------------------------------------------------------
+commodity_etfs:
+  - {label: "Broad Commodities (DBC)", ticker: "DBC", source: stooq, stooq_kind: equity}
+  - {label: "Commodities (DJP)", ticker: "DJP", source: stooq, stooq_kind: equity}
+  - {label: "Oil (USO)", ticker: "USO", source: stooq, stooq_kind: equity}
+  - {label: "Natural Gas (UNG)", ticker: "UNG", source: stooq, stooq_kind: equity}
+  - {label: "Gold (GLD)", ticker: "GLD", source: stooq, stooq_kind: equity}
+  - {label: "Silver (SLV)", ticker: "SLV", source: stooq, stooq_kind: equity}
+  - {label: "Copper (CPER)", ticker: "CPER", source: stooq, stooq_kind: equity}
+  - {label: "Platinum (PPLT)", ticker: "PPLT", source: stooq, stooq_kind: equity}
+  - {label: "Palladium (PALL)", ticker: "PALL", source: stooq, stooq_kind: equity}
+
+# ---------------------------------------------------------------------------
+# Alt assets -- outside the commodity/currency/equity taxonomy, but the
+# Bitcoin-vs-gold ratio specifically is widely enough tracked (including by
+# Andy Hoese / Finding Value Finance) to be worth a dedicated small category.
+# ---------------------------------------------------------------------------
+alt_assets:
+  - {label: "Bitcoin", ticker: "BTC-USD", source: yfinance}
+  - {label: "Ethereum", ticker: "ETH-USD", source: yfinance}
+
+# ------------------------------------------------------------------ currencies
+currencies:
+  - {code: EUR, label: "Euro", ticker: "EURUSD=X", source: yfinance}
+  - {code: JPY, label: "Japanese Yen", ticker: "JPYUSD=X", source: yfinance}
+  - {code: GBP, label: "British Pound", ticker: "GBPUSD=X", source: yfinance}
+  - {code: CHF, label: "Swiss Franc", ticker: "CHFUSD=X", source: yfinance}
+  - {code: CAD, label: "Canadian Dollar", ticker: "CADUSD=X", source: yfinance}
+  - {code: AUD, label: "Australian Dollar", ticker: "AUDUSD=X", source: yfinance}
+  - {code: NZD, label: "New Zealand Dollar", ticker: "NZDUSD=X", source: yfinance}
+  - {code: SEK, label: "Swedish Krona", ticker: "SEKUSD=X", source: yfinance}
+  - {code: NOK, label: "Norwegian Krone", ticker: "NOKUSD=X", source: yfinance}
+  - {code: DKK, label: "Danish Krone", ticker: "DKKUSD=X", source: yfinance}
+  - {code: CNH, label: "Chinese Yuan (Offshore)", ticker: "CNHUSD=X", source: yfinance}
+  - {code: CNY, label: "Chinese Yuan (Onshore)", ticker: "CNYUSD=X", source: yfinance}
+  - {code: HKD, label: "Hong Kong Dollar", ticker: "HKDUSD=X", source: yfinance}
+  - {code: SGD, label: "Singapore Dollar", ticker: "SGDUSD=X", source: yfinance}
+  - {code: KRW, label: "South Korean Won", ticker: "KRWUSD=X", source: yfinance}
+  - {code: TWD, label: "Taiwan Dollar", ticker: "TWDUSD=X", source: yfinance}
+  - {code: INR, label: "Indian Rupee", ticker: "INRUSD=X", source: yfinance}
+  - {code: IDR, label: "Indonesian Rupiah", ticker: "IDRUSD=X", source: yfinance}
+  - {code: THB, label: "Thai Baht", ticker: "THBUSD=X", source: yfinance}
+  - {code: MYR, label: "Malaysian Ringgit", ticker: "MYRUSD=X", source: yfinance}
+  - {code: PHP, label: "Philippine Peso", ticker: "PHPUSD=X", source: yfinance}
+  - {code: VND, label: "Vietnamese Dong", ticker: "VNDUSD=X", source: yfinance}
+  - {code: PLN, label: "Polish Zloty", ticker: "PLNUSD=X", source: yfinance}
+  - {code: CZK, label: "Czech Koruna", ticker: "CZKUSD=X", source: yfinance}
+  - {code: HUF, label: "Hungarian Forint", ticker: "HUFUSD=X", source: yfinance}
+  - {code: RON, label: "Romanian Leu", ticker: "RONUSD=X", source: yfinance}
+  - {code: BGN, label: "Bulgarian Lev", ticker: "BGNUSD=X", source: yfinance}
+  - {code: ISK, label: "Icelandic Krona", ticker: "ISKUSD=X", source: yfinance}
+  - {code: HRK, label: "Croatian Kuna", ticker: "HRKUSD=X", source: yfinance}
+  - {code: MXN, label: "Mexican Peso", ticker: "MXNUSD=X", source: yfinance}
+  - {code: BRL, label: "Brazilian Real", ticker: "BRLUSD=X", source: yfinance}
+  - {code: ARS, label: "Argentine Peso", ticker: "ARSUSD=X", source: yfinance}
+  - {code: CLP, label: "Chilean Peso", ticker: "CLPUSD=X", source: yfinance}
+  - {code: COP, label: "Colombian Peso", ticker: "COPUSD=X", source: yfinance}
+  - {code: PEN, label: "Peruvian Sol", ticker: "PENUSD=X", source: yfinance}
+  - {code: UYU, label: "Uruguayan Peso", ticker: "UYUUSD=X", source: yfinance}
+  - {code: ILS, label: "Israeli Shekel", ticker: "ILSUSD=X", source: yfinance}
+  - {code: TRY, label: "Turkish Lira", ticker: "TRYUSD=X", source: yfinance}
+  - {code: SAR, label: "Saudi Riyal", ticker: "SARUSD=X", source: yfinance}
+  - {code: AED, label: "UAE Dirham", ticker: "AEDUSD=X", source: yfinance}
+  - {code: QAR, label: "Qatari Riyal", ticker: "QARUSD=X", source: yfinance}
+  - {code: KWD, label: "Kuwaiti Dinar", ticker: "KWDUSD=X", source: yfinance}
+  - {code: BHD, label: "Bahraini Dinar", ticker: "BHDUSD=X", source: yfinance}
+  - {code: OMR, label: "Omani Rial", ticker: "OMRUSD=X", source: yfinance}
+  - {code: ZAR, label: "South African Rand", ticker: "ZARUSD=X", source: yfinance}
+  - {code: EGP, label: "Egyptian Pound", ticker: "EGPUSD=X", source: yfinance}
+  - {code: NGN, label: "Nigerian Naira", ticker: "NGNUSD=X", source: yfinance}
+  - {code: MAD, label: "Moroccan Dirham", ticker: "MADUSD=X", source: yfinance}
+  - {code: KES, label: "Kenyan Shilling", ticker: "KESUSD=X", source: yfinance}
+  - {code: RUB, label: "Russian Ruble", ticker: "RUBUSD=X", source: yfinance}
+  - {code: KZT, label: "Kazakh Tenge", ticker: "KZTUSD=X", source: yfinance}
+  - {code: UAH, label: "Ukrainian Hryvnia", ticker: "UAHUSD=X", source: yfinance}
+  - {code: PKR, label: "Pakistani Rupee", ticker: "PKRUSD=X", source: yfinance}
+  - {code: BDT, label: "Bangladeshi Taka", ticker: "BDTUSD=X", source: yfinance}
+  - {code: LKR, label: "Sri Lankan Rupee", ticker: "LKRUSD=X", source: yfinance}
+
+# ---------------------------------------------------------------- commodities
+commodities:
+  - {label: "Gold", ticker: "GC=F", source: yfinance}
+  - {label: "Silver", ticker: "SI=F", source: yfinance}
+  - {label: "Platinum", ticker: "PL=F", source: yfinance}
+  - {label: "Palladium", ticker: "PA=F", source: yfinance}
+  - {label: "Copper (COMEX)", ticker: "HG=F", source: yfinance}
+  - {label: "Aluminum", ticker: "ALI=F", source: yfinance}
+  - {label: "Hot Rolled Coil Steel", ticker: "HRC=F", source: yfinance}
+  - {label: "Iron Ore 62%", ticker: "TIO=F", source: yfinance}
+  - {label: "WTI Crude Oil", ticker: "CL=F", source: yfinance}
+  - {label: "Brent Crude", ticker: "BZ=F", source: yfinance}
+  - {label: "Natural Gas", ticker: "NG=F", source: yfinance}
+  - {label: "Heating Oil", ticker: "HO=F", source: yfinance}
+  - {label: "RBOB Gasoline", ticker: "RB=F", source: yfinance}
+  - {label: "Corn", ticker: "ZC=F", source: yfinance}
+  - {label: "Wheat (Chicago)", ticker: "ZW=F", source: yfinance}
+  - {label: "Kansas Wheat", ticker: "KE=F", source: yfinance}
+  - {label: "Soybeans", ticker: "ZS=F", source: yfinance}
+  - {label: "Soybean Meal", ticker: "ZM=F", source: yfinance}
+  - {label: "Soybean Oil", ticker: "ZL=F", source: yfinance}
+  - {label: "Oats", ticker: "ZO=F", source: yfinance}
+  - {label: "Rice", ticker: "ZR=F", source: yfinance}
+  - {label: "Coffee", ticker: "KC=F", source: yfinance}
+  - {label: "Sugar #11", ticker: "SB=F", source: yfinance}
+  - {label: "Cocoa", ticker: "CC=F", source: yfinance}
+  - {label: "Cotton", ticker: "CT=F", source: yfinance}
+  - {label: "Orange Juice", ticker: "OJ=F", source: yfinance}
+  - {label: "Live Cattle", ticker: "LE=F", source: yfinance}
+  - {label: "Feeder Cattle", ticker: "GF=F", source: yfinance}
+  - {label: "Lean Hogs", ticker: "HE=F", source: yfinance}
+  - {label: "Class III Milk", ticker: "DC=F", source: yfinance}
+  - {label: "Butter", ticker: "CB=F", source: yfinance}
+  - {label: "Cheese", ticker: "CSC=F", source: yfinance}
+  - {label: "Lumber", ticker: "LBR=F", source: yfinance}
+
+# --------------------------------------------------------------- fred_series
+fred_series:
+  # ---- National / Regional Home Prices ----
+  - {label: "FHFA Purchase Only HPI (US)", series_id: "PONHPIM226S"}
+  - {label: "All-Transactions HPI (US)", series_id: "USSTHPI"}
+  - {label: "S&P Case-Shiller National", series_id: "CSUSHPISA"}
+  - {label: "S&P Case-Shiller 10-City", series_id: "SPCS10RSA"}
+  - {label: "S&P Case-Shiller 20-City", series_id: "SPCS20RSA"}
+  - {label: "Median Sales Price New Homes", series_id: "MSPUS"}
+  - {label: "Housing Starts (Total)", series_id: "HOUST"}
+  - {label: "Building Permits (Total)", series_id: "PERMIT"}
+
+  # ---- Commercial Real Estate ----
+  - {label: "Green Street Commercial Property Price Index", series_id: "COMREPUSQ159N"}
+  - {label: "Commercial Real Estate Price Index", series_id: "QUSR628BIS"}
+
+  # ---- Farmland ----
+  - {label: "Farm Real Estate Value", series_id: "FRBV"}
+  - {label: "Cropland Value", series_id: "CRLV"}
+  - {label: "Pastureland Value", series_id: "PTLV"}
+
+  # ---- Construction Materials (PPI) ----
+  - {label: "Lumber (PPI)", series_id: "WPU081"}
+  - {label: "Plywood (PPI)", series_id: "WPU082"}
+  - {label: "Millwork (PPI)", series_id: "WPU083"}
+  - {label: "Concrete Products (PPI)", series_id: "WPU133"}
+  - {label: "Ready-Mix Concrete (PPI)", series_id: "WPU132101"}
+  - {label: "Cement (PPI)", series_id: "WPU132201"}
+  - {label: "Gypsum Products (PPI)", series_id: "WPU136"}
+  - {label: "Flat Glass (PPI)", series_id: "WPU124"}
+  - {label: "Structural Steel (PPI)", series_id: "WPU10740514"}
+  - {label: "Copper Wire (PPI)", series_id: "WPU102501"}
+  - {label: "Plastic Pipe (PPI)", series_id: "WPU072"}
+  - {label: "Rubber Products (PPI)", series_id: "WPU071"}
+  - {label: "Paper & Pulp (PPI)", series_id: "WPU09"}
+
+  # ---- Metals (PPI) ----
+  - {label: "Iron & Steel (PPI)", series_id: "WPS101"}
+  - {label: "Steel Mill Products (PPI)", series_id: "WPU1017"}
+  - {label: "Copper (PPI)", series_id: "WPU102"}
+  - {label: "Aluminum (PPI)", series_id: "WPU103"}
+  - {label: "Nickel (PPI)", series_id: "WPU104"}
+  - {label: "Zinc (PPI)", series_id: "WPU105"}
+  - {label: "Lead (PPI)", series_id: "WPU106"}
+
+  # ---- Chemicals / Fertilizer ----
+  - {label: "Industrial Chemicals (PPI)", series_id: "WPU061"}
+  - {label: "Petrochemicals (PPI)", series_id: "WPU0613"}
+  - {label: "Nitrogen Fertilizer (PPI)", series_id: "WPU065201"}
+  - {label: "Phosphate Fertilizer (PPI)", series_id: "WPU065202"}
+  - {label: "Potash Fertilizer (PPI)", series_id: "WPU065203"}
+
+  # ---- Shipping / Freight ----
+  - {label: "Cass Freight Index", series_id: "FRGSHPUSM649NCIS"}
+  - {label: "Rail Freight Carloads", series_id: "RAILFRTCARLOADS"}
+  - {label: "Truck Transportation PPI", series_id: "PCU484484"}
+  - {label: "Deep Sea Freight Transportation PPI", series_id: "PCU483111483111"}
+
+  # ---- IMF Spot Commodity Prices (monthly cross-check vs. futures above) ----
+  - {label: "Gold (IMF)", series_id: "PGOLDUSDM"}
+  - {label: "Silver (IMF)", series_id: "PSILVERUSDM"}
+  - {label: "Copper (IMF)", series_id: "PCOPPUSDM"}
+  - {label: "Aluminum (IMF)", series_id: "PALUMUSDM"}
+  - {label: "Nickel (IMF)", series_id: "PNICKUSDM"}
+  - {label: "Zinc (IMF)", series_id: "PZINCUSDM"}
+  - {label: "Lead (IMF)", series_id: "PLEADUSDM"}
+  - {label: "Tin (IMF)", series_id: "PTINUSDM"}
+  - {label: "Rubber (IMF)", series_id: "PRUBBERUSDM"}
+  - {label: "Iron Ore (IMF)", series_id: "PIORECRUSDM"}
+  - {label: "WTI Crude (IMF)", series_id: "POILWTIUSDM"}
+  - {label: "Brent Crude (IMF)", series_id: "POILBREUSDM"}
+  - {label: "Henry Hub Gas (IMF)", series_id: "PNGASUSUSDM"}
+  - {label: "Coal (IMF)", series_id: "PCOALAUUSDM"}
+  - {label: "Corn (IMF)", series_id: "PMAIZMTUSDM"}
+  - {label: "Wheat (IMF)", series_id: "PWHEAMTUSDM"}
+  - {label: "Soybeans (IMF)", series_id: "PSOYBUSDM"}
+  - {label: "Cotton (IMF)", series_id: "PCOTTINDUSDM"}
+  - {label: "Coffee (IMF)", series_id: "PCOFFOTMUSDM"}
+  - {label: "Cocoa (IMF)", series_id: "PCOCOUSDM"}
+  - {label: "Sugar (IMF)", series_id: "PSUGAUSAUSDM"}
