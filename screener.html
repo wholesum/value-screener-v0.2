@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Value Desk – Cheapness Ranking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --bg: #15181B; --surface: #1D2126; --surface-2: #242830; --hairline: #2C3138;
+      --ink: #EAE6DD; --ink-muted: #8D949C; --cheap: #6FA98A; --cheap-dim: #3E5C4E;
+      --rich: #C97B4A; --rich-dim: #5C4636; --gold: #C9A24A; --radius: 3px;
+    }
+    body { margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; }
+    .wrap { max-width:1100px; margin:0 auto; padding:24px 20px 60px; }
+    .masthead { display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid var(--hairline); padding-bottom:16px; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+    .masthead h1 { font-family:'Fraunces',serif; font-weight:500; font-size:28px; margin:0; }
+    .masthead .kicker { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); }
+    .meta { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-muted); }
+    .search-bar { display:flex; gap:10px; align-items:center; background:var(--surface); border:1px solid var(--hairline); border-radius:var(--radius); padding:4px 4px 4px 14px; margin-bottom:24px; flex-wrap:wrap; }
+    .search-bar input { flex:1; background:transparent; border:none; color:var(--ink); font-size:14px; padding:10px 0; min-width:160px; outline:none; }
+    .search-bar input::placeholder { color:var(--ink-muted); }
+    .search-bar button { background:var(--gold); color:#20180A; border:none; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; padding:8px 16px; border-radius:var(--radius); cursor:pointer; }
+    .search-bar button:hover { opacity:0.85; }
+    section.block { margin-bottom:36px; }
+    h2.section-title { font-family:'Fraunces',serif; font-weight:500; font-size:20px; display:flex; align-items:baseline; gap:8px; margin:0 0 4px; }
+    h2.section-title .num { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-muted); font-weight:400; }
+    p.section-note { font-size:12px; color:var(--ink-muted); margin:0 0 12px; }
+    table.stock-table { width:100%; border-collapse:collapse; font-size:12px; }
+    table.stock-table th { font-family:'IBM Plex Mono',monospace; font-size:9px; text-transform:uppercase; color:var(--ink-muted); text-align:left; padding:6px 8px; border-bottom:1px solid var(--hairline); cursor:pointer; user-select:none; }
+    table.stock-table td { padding:7px 8px; border-bottom:1px solid var(--hairline); font-family:'IBM Plex Mono',monospace; font-size:11.5px; }
+    table.stock-table tbody tr:hover { background:var(--surface-2); cursor:pointer; }
+    .cheap-badge { display:inline-block; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:600; }
+    .cheap-badge.very-cheap { background:var(--cheap-dim); color:var(--cheap); }
+    .cheap-badge.cheap { background:var(--cheap-dim); color:var(--cheap); opacity:0.75; }
+    .cheap-badge.expensive { background:var(--rich-dim); color:var(--rich); }
+    .cheap-badge.neutral { background:var(--hairline); color:var(--ink-muted); }
+    .rating-badge { display:inline-block; padding:2px 8px; border-radius:12px; font-size:9px; font-weight:600; }
+    .rating-badge.strong-buy, .rating-badge.buy { background:#1a4a1a; color:#6fcf97; }
+    .rating-badge.hold { background:#4a4a1a; color:#f2c94a; }
+    .rating-badge.sell, .rating-badge.strong-sell { background:#4a1a1a; color:#eb5757; }
+    .rating-badge.na { background:var(--hairline); color:var(--ink-muted); }
+    .disclaimer { margin-top:40px; padding-top:16px; border-top:1px solid var(--hairline); font-size:11px; color:var(--ink-muted); }
+    .err { color:var(--rich); font-family:'IBM Plex Mono',monospace; font-size:12px; padding:12px; background:var(--surface); border-radius:var(--radius); margin-bottom:16px; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script>
+const { useState, useEffect } = React;
+const h = React.createElement;
+const API_BASE = '';
+
+function cheapBadge(pct) {
+  if (pct === null || pct === undefined) return h('span', {className:'cheap-badge neutral'}, '—');
+  const label = pct.toFixed(1) + '%';
+  let cls = 'neutral';
+  if (pct < -25) cls = 'very-cheap';
+  else if (pct < -5) cls = 'cheap';
+  else if (pct > 5) cls = 'expensive';
+  return h('span', {className:'cheap-badge ' + cls}, label);
+}
+
+function ratingBadge(label) {
+  if (!label) return h('span', {className:'rating-badge na'}, 'N/A');
+  const cls = label.toLowerCase().replace(' ', '-');
+  return h('span', {className:'rating-badge ' + cls}, label);
+}
+
+function Table({ title, note, rows, columns, onRowClick }) {
+  return h('section', {className:'block'}, [
+    h('h2', {className:'section-title', key:'t'}, [title, h('span', {className:'num', key:'n'}, rows.length + ' tracked')]),
+    note && h('p', {className:'section-note', key:'note'}, note),
+    h('table', {className:'stock-table', key:'table'}, [
+      h('thead', {key:'thead'}, h('tr', {}, columns.map(c => h('th', {key:c.key}, c.header)))),
+      h('tbody', {key:'tbody'}, rows.map((r, i) => h('tr', {key:i, onClick: () => onRowClick && onRowClick(r)},
+        columns.map(c => h('td', {key:c.key}, c.render ? c.render(r) : r[c.key])))))
+    ])
+  ]);
+}
+
+function App() {
+  const [data, setData] = useState(null);
+  const [convergence, setConvergence] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState('');
+  const [searchResults, setSearchResults] = useState(null);
+  const [history, setHistory] = useState(null);
+
+  const fetchAll = async () => {
+    setLoading(true); setError(null);
+    try {
+      const [dashRes, convRes] = await Promise.all([
+        fetch(API_BASE + '/api/dashboard'),
+        fetch(API_BASE + '/api/convergence'),
+      ]);
+      if (!dashRes.ok) throw new Error('Dashboard HTTP ' + dashRes.status);
+      setData(await dashRes.json());
+      setConvergence(convRes.ok ? await convRes.json() : []);
+    } catch (err) { setError(err.message); }
+    finally { setLoading(false); }
+  };
+
+  const runSearch = async () => {
+    if (!query.trim()) return;
+    try {
+      const res = await fetch(API_BASE + '/api/search?q=' + encodeURIComponent(query.trim()));
+      setSearchResults(res.ok ? await res.json() : []);
+    } catch (err) { setError(err.message); }
+  };
+
+  const showHistory = async (row) => {
+    try {
+      const res = await fetch(API_BASE + '/api/history/' + encodeURIComponent(row.key));
+      if (res.ok) setHistory(await res.json());
+    } catch (err) { /* non-fatal */ }
+  };
+
+  useEffect(() => { fetchAll(); }, []);
+
+  if (loading && !data) return h('div', {className:'wrap'}, h('p', {className:'meta'}, 'Loading…'));
+
+  const summaryCols = [
+    { key:'label', header:'Name' },
+    { key:'ticker', header:'Ticker' },
+    { key:'current_ratio', header:'Ratio / Gold', render: r => r.current_ratio ? r.current_ratio.toFixed(5) : '—' },
+    { key:'historical_mean', header:'Hist. Mean', render: r => r.historical_mean ? r.historical_mean.toFixed(5) : '—' },
+    { key:'deviation_pct', header:'vs History', render: r => cheapBadge(r.deviation_pct) },
+    { key:'sentiment_label', header:'Momentum', render: r => ratingBadge(r.sentiment_label) },
+    { key:'n_observations', header:'N Obs' },
+  ];
+
+  const convergenceCols = [
+    { key:'label', header:'Sector / Country' },
+    { key:'ticker', header:'Ticker' },
+    { key:'sector_deviation_pct', header:'Sector vs Hist', render: r => cheapBadge(r.sector_deviation_pct) },
+    { key:'commodity_link', header:'Linked Commodity', render: r => r.commodity_link ? `${r.commodity_link} (${r.commodity_deviation_pct !== null ? r.commodity_deviation_pct.toFixed(1)+'%' : '—'})` : '—' },
+    { key:'currency_link', header:'Linked Currency', render: r => r.currency_link ? `${r.currency_link} (${r.currency_deviation_pct !== null ? r.currency_deviation_pct.toFixed(1)+'%' : '—'})` : '—' },
+    { key:'avg_deviation_pct', header:'Combined', render: r => cheapBadge(r.avg_deviation_pct) },
+  ];
+
+  return h('div', {className:'wrap'}, [
+    h('div', {className:'masthead', key:'head'}, [
+      h('div', {key:'l'}, [
+        h('div', {className:'kicker', key:'k'}, 'Value Desk'),
+        h('h1', {key:'h'}, 'Cheapness vs. Gold, Ranked'),
+      ]),
+      h('div', {className:'meta', key:'r'}, data && data.last_updated ? 'Data as of ' + data.last_updated : ''),
+    ]),
+    error && h('div', {className:'err', key:'err'}, error),
+    h('div', {className:'search-bar', key:'search'}, [
+      h('input', {key:'i', placeholder:'Search by name or ticker…', value:query,
+        onChange: e => setQuery(e.target.value), onKeyDown: e => e.key === 'Enter' && runSearch()}),
+      h('button', {key:'b', onClick: runSearch}, 'Search'),
+    ]),
+    history && h('section', {className:'block', key:'hist'}, [
+      h('h2', {className:'section-title', key:'t'}, `History: ${history.label}`),
+      h('p', {className:'section-note', key:'n'}, `${history.dates.length} data points. (Wire in a charting lib -- e.g. Chart.js from cdnjs -- to plot history.dates / history.values here.)`),
+    ]),
+    searchResults && h(Table, {key:'search-results', title:'Search Results', rows:searchResults, columns:summaryCols, onRowClick:showHistory}),
+    data && h(Table, {key:'conv', title:'Asymmetric Upside Screen', note:'Sector/country ETFs ranked by average deviation-from-history across the sector itself and its linked commodity + currency (see config/tickers.yaml).', rows: convergence || [], columns: convergenceCols}),
+    data && h(Table, {key:'sectors', title:'Sectors & Country ETFs', rows: data.sectors, columns: summaryCols, onRowClick: showHistory}),
+    data && h(Table, {key:'currencies', title:'Currencies', rows: data.currencies, columns: summaryCols, onRowClick: showHistory}),
+    data && h(Table, {key:'commodities', title:'Commodities', rows: data.commodities, columns: summaryCols, onRowClick: showHistory}),
+    data && h(Table, {key:'macro', title:'Real Estate & Macro (FRED)', rows: data.macro, columns: summaryCols, onRowClick: showHistory}),
+    h('div', {className:'disclaimer', key:'disc'}, 'Educational tool, not investment advice. "Cheap vs. history" measures a price ratio against its own past average -- it says nothing about why the ratio is where it is, and does not account for structural changes (new supply, permanent demand shifts, etc.).'),
+  ]);
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+</script>
+</body>
+</html>

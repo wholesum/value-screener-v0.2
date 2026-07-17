@@ -1,0 +1,159 @@
+# ==============================================================================
+# SINGLE SOURCE OF TRUTH for every instrument this tool tracks.
+#
+# Both populate.py (the batch job that fetches data) and app.py (the API that
+# serves it) load THIS file. Nothing is hardcoded in Python anymore, and
+# nothing is duplicated between two files.
+#
+# This is seeded with a small representative set per category. Add rows freely
+# — the pipeline doesn't care how many there are, it just fetches whatever is
+# listed here. Re-run `python populate.py` after editing this file.
+#
+# Fields:
+#   label      : human-readable name shown in the UI
+#   ticker     : the symbol used to fetch price history
+#   source     : "stooq" | "yfinance" | "fred"  (which fetcher owns this symbol)
+#   stooq_kind : only needed when source=stooq -> "equity" | "fx" | "index"
+#   commodity  : (sectors/currencies/country_etfs only) key into `commodities`
+#                this instrument is expected to co-move with, for the
+#                convergence/asymmetric-upside screen. Use null if none.
+#   currency   : same idea, key into `currencies`. Use null if none (e.g. USD).
+# ==============================================================================
+
+gold_ticker: "GC=F"          # everything is priced in ounces of this
+gold_source: "yfinance"      # Stooq doesn't carry COMEX gold futures reliably
+
+sectors:
+  - label: "Energy (S&P)"
+    ticker: "XLE"
+    source: "stooq"
+    stooq_kind: "equity"
+    commodity: "WTI Crude Oil"
+    currency: "CAD"
+  - label: "Oil Exploration (E&P)"
+    ticker: "XOP"
+    source: "stooq"
+    stooq_kind: "equity"
+    commodity: "WTI Crude Oil"
+    currency: "CAD"
+  - label: "Oil Services"
+    ticker: "OIH"
+    source: "stooq"
+    stooq_kind: "equity"
+    commodity: "WTI Crude Oil"
+    currency: "CAD"
+  - label: "Gold Miners"
+    ticker: "GDX"
+    source: "stooq"
+    stooq_kind: "equity"
+    commodity: "Gold"
+    currency: "AUD"
+  - label: "Copper Miners"
+    ticker: "COPX"
+    source: "stooq"
+    stooq_kind: "equity"
+    commodity: "Copper"
+    currency: "AUD"
+  - label: "Technology (S&P)"
+    ticker: "XLK"
+    source: "stooq"
+    stooq_kind: "equity"
+    commodity: null
+    currency: "USD"
+  - label: "Real Estate (S&P)"
+    ticker: "XLRE"
+    source: "stooq"
+    stooq_kind: "equity"
+    commodity: "Lumber"
+    currency: "USD"
+  - label: "Homebuilders"
+    ticker: "ITB"
+    source: "stooq"
+    stooq_kind: "equity"
+    commodity: "Lumber"
+    currency: "USD"
+
+country_etfs:
+  - label: "Norway"
+    ticker: "ENOR"
+    source: "stooq"
+    stooq_kind: "equity"
+    commodity: "Brent Crude"
+    currency: "NOK"
+  - label: "Canada"
+    ticker: "EWC"
+    source: "stooq"
+    stooq_kind: "equity"
+    commodity: "WTI Crude Oil"
+    currency: "CAD"
+  - label: "Japan"
+    ticker: "EWJ"
+    source: "stooq"
+    stooq_kind: "equity"
+    commodity: null
+    currency: "JPY"
+  - label: "South Africa"
+    ticker: "EZA"
+    source: "stooq"
+    stooq_kind: "equity"
+    commodity: "Gold"
+    currency: "ZAR"
+
+currencies:
+  - code: "EUR"
+    label: "Euro"
+    ticker: "EURUSD=X"
+    source: "yfinance"       # FX crosses: yfinance is more consistently available than Stooq
+  - code: "JPY"
+    label: "Japanese Yen"
+    ticker: "JPYUSD=X"
+    source: "yfinance"
+  - code: "NOK"
+    label: "Norwegian Krone"
+    ticker: "NOKUSD=X"
+    source: "yfinance"
+  - code: "CAD"
+    label: "Canadian Dollar"
+    ticker: "CADUSD=X"
+    source: "yfinance"
+  - code: "ZAR"
+    label: "South African Rand"
+    ticker: "ZARUSD=X"
+    source: "yfinance"
+  - code: "AUD"
+    label: "Australian Dollar"
+    ticker: "AUDUSD=X"
+    source: "yfinance"
+
+commodities:
+  - label: "Gold"
+    ticker: "GC=F"
+    source: "yfinance"
+  - label: "Silver"
+    ticker: "SI=F"
+    source: "yfinance"
+  - label: "WTI Crude Oil"
+    ticker: "CL=F"
+    source: "yfinance"
+  - label: "Brent Crude"
+    ticker: "BZ=F"
+    source: "yfinance"
+  - label: "Copper"
+    ticker: "HG=F"
+    source: "yfinance"
+  - label: "Lumber"
+    ticker: "LBR=F"
+    source: "yfinance"
+
+# FRED macro series (housing, farmland, commercial real estate, PPI inputs).
+# These already worked well in the original build -- kept as-is, just moved
+# out of hardcoded Python. Get a free key at https://fred.stlouisfed.org/docs/api/api_key.html
+fred_series:
+  - label: "S&P Case-Shiller National Home Price Index"
+    series_id: "CSUSHPISA"
+  - label: "Farm Real Estate Value"
+    series_id: "FRBV"
+  - label: "Green Street Commercial Property Price Index"
+    series_id: "COMREPUSQ159N"
+  - label: "Median Sales Price New Homes"
+    series_id: "MSPUS"

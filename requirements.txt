@@ -1,0 +1,8 @@
+flask==3.0.3
+flask-cors==4.0.1
+yfinance==0.2.66
+curl_cffi==0.7.4
+requests==2.32.3
+pandas==2.2.3
+pyyaml==6.0.2
+gunicorn==22.0.0
