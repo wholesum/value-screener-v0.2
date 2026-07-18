@@ -70,6 +70,10 @@ function ratingBadge(label) {
   return h('span', {className:'rating-badge ' + cls}, label);
 }
 
+function monthName(m) {
+  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1] || '—';
+}
+
 function Table({ title, note, rows, columns, onRowClick }) {
   return h('section', {className:'block'}, [
     h('h2', {className:'section-title', key:'t'}, [title, h('span', {className:'num', key:'n'}, rows.length + ' tracked')]),
@@ -131,6 +135,8 @@ function App() {
     { key:'historical_mean', header:'Hist. Mean', render: r => r.historical_mean ? r.historical_mean.toFixed(5) : '—' },
     { key:'deviation_pct', header:'vs History', render: r => cheapBadge(r.deviation_pct) },
     { key:'sentiment_label', header:'Momentum', render: r => ratingBadge(r.sentiment_label) },
+    { key:'best_buy_month', header:'Best Buy Month', render: r => r.best_buy_month ? monthName(r.best_buy_month) : '—' },
+    { key:'best_sell_month', header:'Best Sell Month', render: r => r.best_sell_month ? monthName(r.best_sell_month) : '—' },
     { key:'n_observations', header:'N Obs' },
   ];
 
