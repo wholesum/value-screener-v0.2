@@ -88,13 +88,18 @@ def init_db():
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     with get_conn() as conn:
         conn.executescript(SCHEMA)
-        # Add new columns for commodity/currency relative ratios
+        # Existing column additions for commodity/currency ratios
         _add_column_if_not_exists(conn, "summary", "commodity_ratio", "REAL")
         _add_column_if_not_exists(conn, "summary", "commodity_ratio_mean", "REAL")
         _add_column_if_not_exists(conn, "summary", "commodity_ratio_deviation_pct", "REAL")
         _add_column_if_not_exists(conn, "summary", "currency_ratio", "REAL")
         _add_column_if_not_exists(conn, "summary", "currency_ratio_mean", "REAL")
         _add_column_if_not_exists(conn, "summary", "currency_ratio_deviation_pct", "REAL")
+        # New seasonal columns
+        _add_column_if_not_exists(conn, "summary", "best_buy_month", "INTEGER")
+        _add_column_if_not_exists(conn, "summary", "best_sell_month", "INTEGER")
+        _add_column_if_not_exists(conn, "summary", "best_buy_return", "REAL")
+        _add_column_if_not_exists(conn, "summary", "best_sell_return", "REAL")
 
 
 # ---------------------------------------------------------------- prices ---
