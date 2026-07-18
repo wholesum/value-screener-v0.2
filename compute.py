@@ -121,3 +121,41 @@ def sentiment(price_rows):
         label = "Strong Sell"
 
     return round(float(score), 1), label
+
+def seasonal_stats(price_rows, min_years=5):
+    """
+    Compute seasonal patterns from daily price rows.
+    Returns dict with 'best_buy_month' (1-12), 'best_sell_month', and
+    average returns per month, or None if insufficient data.
+    """
+    s = _to_series(price_rows)
+    if len(s) < 252 * min_years:  # roughly 5 years of daily data
+        return None
+
+    # Resample to month-end and get last price of each month
+    monthly = s.resample('ME').last().dropna()
+    if len(monthly) < 12 * min_years:
+        return None
+
+    # Compute monthly returns (percentage change)
+    monthly_returns = monthly.pct_change().dropna() * 100  # in percent
+
+    # Group by month number (1-12)
+    grouped = monthly_returns.groupby(monthly_returns.index.month)
+    avg_returns = grouped.mean()
+
+    # Need at least 3 observations per month to be meaningful
+    # but we already have many years; we'll still require min_years
+    if any(avg_returns.isna()) or len(avg_returns) < 12:
+        return None
+
+    best_buy_month = avg_returns.idxmin()   # lowest average return
+    best_sell_month = avg_returns.idxmax()  # highest average return
+
+    return {
+        "best_buy_month": int(best_buy_month),
+        "best_sell_month": int(best_sell_month),
+        "best_buy_return": avg_returns[best_buy_month],
+        "best_sell_return": avg_returns[best_sell_month],
+        "avg_returns": avg_returns.to_dict(),   # optional for debugging
+    }
