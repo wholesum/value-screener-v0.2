@@ -173,8 +173,6 @@ country_etfs:
 commodity_etfs:
   - {label: "Broad Commodities (DBC)", ticker: "DBC", source: stooq, stooq_kind: equity}
   - {label: "Commodities (DJP)", ticker: "DJP", source: stooq, stooq_kind: equity}
-  - {label: "Oil (USO)", ticker: "USO", source: stooq, stooq_kind: equity}
-  - {label: "Natural Gas (UNG)", ticker: "UNG", source: stooq, stooq_kind: equity}
   - {label: "Gold (GLD)", ticker: "GLD", source: stooq, stooq_kind: equity}
   - {label: "Silver (SLV)", ticker: "SLV", source: stooq, stooq_kind: equity}
   - {label: "Copper (CPER)", ticker: "CPER", source: stooq, stooq_kind: equity}
