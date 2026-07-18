@@ -7,7 +7,18 @@ Keeping this isolated also makes it testable: you can unit-test
 `ratio_stats()` against a synthetic price series without touching a network
 or a database.
 """
+import math
 import pandas as pd
+
+
+def _clean_value(v):
+    """Convert inf/-inf/nan to None, else return v."""
+    if v is None:
+        return None
+    if isinstance(v, float):
+        if not math.isfinite(v):
+            return None
+    return v
 
 
 def _to_series(rows):
@@ -63,12 +74,14 @@ def ratio_stats(asset_rows, gold_rows, resample_freq=None):
     if ratio.empty:
         return None
 
-    current_ratio = float(ratio.iloc[-1])
-    historical_mean = float(ratio.mean())
-    if historical_mean == 0:
+    current_ratio = _clean_value(float(ratio.iloc[-1]))
+    historical_mean = _clean_value(float(ratio.mean()))
+    if historical_mean is None or historical_mean == 0:
         return None
 
-    deviation_pct = (current_ratio - historical_mean) / historical_mean * 100
+    deviation_pct = _clean_value((current_ratio - historical_mean) / historical_mean * 100)
+    if deviation_pct is None:
+        return None
 
     return {
         "current_ratio": current_ratio,
@@ -76,7 +89,7 @@ def ratio_stats(asset_rows, gold_rows, resample_freq=None):
         "deviation_pct": deviation_pct,
         "n_observations": int(len(ratio)),
         "history_start": ratio.index.min().strftime("%Y-%m-%d"),
-        "last_price": float(asset.iloc[-1]),
+        "last_price": _clean_value(float(asset.iloc[-1])),
     }
 
 
@@ -96,7 +109,9 @@ def sentiment(price_rows):
     if pd.isna(ma.iloc[-1]):
         return None, None
 
-    pct_from_ma = (s.iloc[-1] - ma.iloc[-1]) / ma.iloc[-1] * 100
+    pct_from_ma = _clean_value((s.iloc[-1] - ma.iloc[-1]) / ma.iloc[-1] * 100)
+    if pct_from_ma is None:
+        return None, None
 
     delta = s.diff()
     gain = delta.clip(lower=0).rolling(14).mean()
@@ -104,10 +119,16 @@ def sentiment(price_rows):
     rs = gain / loss
     rsi = 100 - (100 / (1 + rs))
     rsi_val = rsi.iloc[-1] if not pd.isna(rsi.iloc[-1]) else 50
+    rsi_val = _clean_value(rsi_val)
+    if rsi_val is None:
+        rsi_val = 50
 
     pct_scaled = max(-30, min(30, pct_from_ma)) / 30 * 70
     rsi_scaled = (rsi_val - 50) / 50 * 30
     score = max(-100, min(100, pct_scaled + rsi_scaled))
+    score = _clean_value(score)
+    if score is None:
+        return None, None
 
     if score > 40:
         label = "Strong Buy"
@@ -121,6 +142,7 @@ def sentiment(price_rows):
         label = "Strong Sell"
 
     return round(float(score), 1), label
+
 
 def seasonal_stats(price_rows, min_years=5):
     """
@@ -144,18 +166,28 @@ def seasonal_stats(price_rows, min_years=5):
     grouped = monthly_returns.groupby(monthly_returns.index.month)
     avg_returns = grouped.mean()
 
-    # Need at least 3 observations per month to be meaningful
-    # but we already have many years; we'll still require min_years
-    if any(avg_returns.isna()) or len(avg_returns) < 12:
+    # Ensure all averages are finite and we have 12 months
+    if any(pd.isna(avg_returns)) or len(avg_returns) < 12:
+        return None
+
+    # Clean any inf values
+    avg_returns = avg_returns.apply(_clean_value)
+    if avg_returns.isna().any():
         return None
 
     best_buy_month = avg_returns.idxmin()   # lowest average return
     best_sell_month = avg_returns.idxmax()  # highest average return
 
+    # Ensure the best values are finite
+    best_buy_return = _clean_value(avg_returns[best_buy_month])
+    best_sell_return = _clean_value(avg_returns[best_sell_month])
+    if best_buy_return is None or best_sell_return is None:
+        return None
+
     return {
         "best_buy_month": int(best_buy_month),
         "best_sell_month": int(best_sell_month),
-        "best_buy_return": avg_returns[best_buy_month],
-        "best_sell_return": avg_returns[best_sell_month],
+        "best_buy_return": best_buy_return,
+        "best_sell_return": best_sell_return,
         "avg_returns": avg_returns.to_dict(),   # optional for debugging
     }
