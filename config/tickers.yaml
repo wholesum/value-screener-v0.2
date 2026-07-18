@@ -68,13 +68,13 @@ sectors:
   - {label: "Medical Devices", ticker: "IHI", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
   - {label: "Pharmaceuticals", ticker: "PJP", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
 
-  # ---- Industrials ----
+  # ---- Industrials (Airlines & Transportation now have no commodity link) ----
   - {label: "Industrials (S&P)", ticker: "XLI", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
   - {label: "Infrastructure", ticker: "PAVE", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: USD}
   - {label: "Aerospace & Defense", ticker: "ITA", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
   - {label: "Defense (PPA)", ticker: "PPA", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
-  - {label: "Transportation", ticker: "IYT", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: USD}
-  - {label: "Airlines", ticker: "JETS", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: USD}
+  - {label: "Transportation", ticker: "IYT", source: stooq, stooq_kind: equity, commodity: null, currency: USD}      # removed oil link
+  - {label: "Airlines", ticker: "JETS", source: stooq, stooq_kind: equity, commodity: null, currency: USD}          # removed oil link
   - {label: "Autos", ticker: "CARZ", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
   - {label: "Electric Vehicles (DRIV)", ticker: "DRIV", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: USD}
   - {label: "Dry Bulk Shipping (BOAT)", ticker: "BOAT", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
@@ -119,48 +119,51 @@ sectors:
 
 # -------------------------------------------------------------- country_etfs -
 country_etfs:
-  - {label: "Japan", ticker: "EWJ", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: JPY}
-  - {label: "China", ticker: "FXI", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: CNY}
-  - {label: "Brazil", ticker: "EWZ", source: stooq, stooq_kind: equity, commodity: "Soybeans", currency: BRL}
-  - {label: "India", ticker: "INDA", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: INR}
-  - {label: "Emerging Markets", ticker: "EEM", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: USD}
-  - {label: "Developed ex-US", ticker: "EFA", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: USD}
-  - {label: "Europe", ticker: "VGK", source: stooq, stooq_kind: equity, commodity: "Natural Gas", currency: EUR}
-  - {label: "Asia-Pacific", ticker: "VPL", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: USD}
-  - {label: "UK", ticker: "EWU", source: stooq, stooq_kind: equity, commodity: "Brent Crude", currency: GBP}
-  - {label: "Switzerland", ticker: "EWL", source: stooq, stooq_kind: equity, commodity: "Gold", currency: CHF}
+  # ---- Commodity exporters (positive correlation) ----
   - {label: "Canada", ticker: "EWC", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: CAD}
   - {label: "Australia", ticker: "EWA", source: stooq, stooq_kind: equity, commodity: "Iron Ore 62%", currency: AUD}
-  - {label: "New Zealand", ticker: "ENZL", source: stooq, stooq_kind: equity, commodity: "Class III Milk", currency: NZD}
-  - {label: "Sweden", ticker: "EWD", source: stooq, stooq_kind: equity, commodity: null, currency: SEK}
-  - {label: "Norway", ticker: "ENOR", source: stooq, stooq_kind: equity, commodity: "Brent Crude", currency: NOK}
-  - {label: "Denmark", ticker: "EDEN", source: stooq, stooq_kind: equity, commodity: null, currency: DKK}
-  - {label: "Hong Kong", ticker: "EWH", source: stooq, stooq_kind: equity, commodity: null, currency: HKD}
-  - {label: "Singapore", ticker: "EWS", source: stooq, stooq_kind: equity, commodity: null, currency: SGD}
-  - {label: "South Korea", ticker: "EWY", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: KRW}
-  - {label: "Taiwan", ticker: "EWT", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: TWD}
-  - {label: "Indonesia", ticker: "EIDO", source: stooq, stooq_kind: equity, commodity: null, currency: IDR}
-  - {label: "Thailand", ticker: "THD", source: stooq, stooq_kind: equity, commodity: "Rice", currency: THB}
-  - {label: "Malaysia", ticker: "EWM", source: stooq, stooq_kind: equity, commodity: null, currency: MYR}
-  - {label: "Philippines", ticker: "EPHE", source: stooq, stooq_kind: equity, commodity: null, currency: PHP}
-  - {label: "Vietnam", ticker: "VNM", source: stooq, stooq_kind: equity, commodity: null, currency: VND}
-  - {label: "Poland", ticker: "EPOL", source: stooq, stooq_kind: equity, commodity: null, currency: PLN}
-  - {label: "Mexico", ticker: "EWW", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: MXN}
-  - {label: "Argentina", ticker: "ARGT", source: stooq, stooq_kind: equity, commodity: "Soybeans", currency: ARS}
+  - {label: "Brazil", ticker: "EWZ", source: stooq, stooq_kind: equity, commodity: "Soybeans", currency: BRL}
   - {label: "Chile", ticker: "ECH", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: CLP}
   - {label: "Peru", ticker: "EPU", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: PEN}
-  - {label: "Turkey", ticker: "TUR", source: stooq, stooq_kind: equity, commodity: null, currency: TRY}
   - {label: "Saudi Arabia", ticker: "KSA", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: SAR}
-  - {label: "South Africa", ticker: "EZA", source: stooq, stooq_kind: equity, commodity: "Gold", currency: ZAR}
   - {label: "UAE", ticker: "UAE", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: AED}
   - {label: "Qatar", ticker: "QAT", source: stooq, stooq_kind: equity, commodity: "Natural Gas", currency: QAR}
   - {label: "Kuwait", ticker: "KWT", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: KWD}
-  - {label: "Israel", ticker: "EIS", source: stooq, stooq_kind: equity, commodity: null, currency: ILS}
-  - {label: "Eurozone", ticker: "EZU", source: stooq, stooq_kind: equity, commodity: "Natural Gas", currency: EUR}
-  - {label: "China A-shares", ticker: "KBA", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: CNY}
-  - {label: "Greece", ticker: "GREK", source: stooq, stooq_kind: equity, commodity: null, currency: EUR}
+  - {label: "Norway", ticker: "ENOR", source: stooq, stooq_kind: equity, commodity: "Brent Crude", currency: NOK}
+  - {label: "South Africa", ticker: "EZA", source: stooq, stooq_kind: equity, commodity: "Gold", currency: ZAR}
+  - {label: "Argentina", ticker: "ARGT", source: stooq, stooq_kind: equity, commodity: "Soybeans", currency: ARS}
+  - {label: "Mexico", ticker: "EWW", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: MXN}
+  - {label: "New Zealand", ticker: "ENZL", source: stooq, stooq_kind: equity, commodity: "Class III Milk", currency: NZD}
+  - {label: "Thailand", ticker: "THD", source: stooq, stooq_kind: equity, commodity: "Rice", currency: THB}
   - {label: "Africa", ticker: "AFK", source: stooq, stooq_kind: equity, commodity: "Gold", currency: ZAR}
-  - {label: "Latin America", ticker: "ILF", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: BRL}
+  - {label: "Switzerland", ticker: "EWL", source: stooq, stooq_kind: equity, commodity: "Gold", currency: CHF}
+  
+  # ---- Non-commodity economies / importers (no commodity link) ----
+  - {label: "Japan", ticker: "EWJ", source: stooq, stooq_kind: equity, commodity: null, currency: JPY}
+  - {label: "India", ticker: "INDA", source: stooq, stooq_kind: equity, commodity: null, currency: INR}
+  - {label: "China", ticker: "FXI", source: stooq, stooq_kind: equity, commodity: null, currency: CNY}
+  - {label: "South Korea", ticker: "EWY", source: stooq, stooq_kind: equity, commodity: null, currency: KRW}
+  - {label: "Taiwan", ticker: "EWT", source: stooq, stooq_kind: equity, commodity: null, currency: TWD}
+  - {label: "Hong Kong", ticker: "EWH", source: stooq, stooq_kind: equity, commodity: null, currency: HKD}
+  - {label: "Singapore", ticker: "EWS", source: stooq, stooq_kind: equity, commodity: null, currency: SGD}
+  - {label: "Israel", ticker: "EIS", source: stooq, stooq_kind: equity, commodity: null, currency: ILS}
+  - {label: "Turkey", ticker: "TUR", source: stooq, stooq_kind: equity, commodity: null, currency: TRY}
+  - {label: "Greece", ticker: "GREK", source: stooq, stooq_kind: equity, commodity: null, currency: EUR}
+  - {label: "Poland", ticker: "EPOL", source: stooq, stooq_kind: equity, commodity: null, currency: PLN}
+  - {label: "Denmark", ticker: "EDEN", source: stooq, stooq_kind: equity, commodity: null, currency: DKK}
+  - {label: "Sweden", ticker: "EWD", source: stooq, stooq_kind: equity, commodity: null, currency: SEK}
+  - {label: "UK", ticker: "EWU", source: stooq, stooq_kind: equity, commodity: null, currency: GBP}
+  - {label: "Europe", ticker: "VGK", source: stooq, stooq_kind: equity, commodity: null, currency: EUR}
+  - {label: "Eurozone", ticker: "EZU", source: stooq, stooq_kind: equity, commodity: null, currency: EUR}
+  - {label: "Indonesia", ticker: "EIDO", source: stooq, stooq_kind: equity, commodity: null, currency: IDR}
+  - {label: "Malaysia", ticker: "EWM", source: stooq, stooq_kind: equity, commodity: null, currency: MYR}
+  - {label: "Philippines", ticker: "EPHE", source: stooq, stooq_kind: equity, commodity: null, currency: PHP}
+  - {label: "Vietnam", ticker: "VNM", source: stooq, stooq_kind: equity, commodity: null, currency: VND}
+  - {label: "Emerging Markets", ticker: "EEM", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Developed ex-US", ticker: "EFA", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Asia-Pacific", ticker: "VPL", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Latin America", ticker: "ILF", source: stooq, stooq_kind: equity, commodity: null, currency: BRL}
+  - {label: "China A-shares", ticker: "KBA", source: stooq, stooq_kind: equity, commodity: null, currency: CNY}
   - {label: "Frontier Markets", ticker: "FM", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
 
 # ---------------------------------------------------------------------------
