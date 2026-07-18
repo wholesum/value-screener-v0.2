@@ -103,6 +103,9 @@ def build_summary_row(key, category, label, ticker, gold_rows, commodity_link=No
     if currency_series:
         currency_stats = compute.ratio_stats(asset_rows, currency_series, resample_freq=resample_freq)
 
+    # ---- Seasonal stats: best month to buy and sell ----
+    season = compute.seasonal_stats(asset_rows)
+
     db.upsert_summary({
         "key": key,
         "category": category,
@@ -126,6 +129,11 @@ def build_summary_row(key, category, label, ticker, gold_rows, commodity_link=No
         "currency_ratio": currency_stats["current_ratio"] if currency_stats else None,
         "currency_ratio_mean": currency_stats["historical_mean"] if currency_stats else None,
         "currency_ratio_deviation_pct": currency_stats["deviation_pct"] if currency_stats else None,
+        # New seasonal fields
+        "best_buy_month": season["best_buy_month"] if season else None,
+        "best_sell_month": season["best_sell_month"] if season else None,
+        "best_buy_return": season["best_buy_return"] if season else None,
+        "best_sell_return": season["best_sell_return"] if season else None,
     })
 
 
@@ -143,15 +151,12 @@ def run(full_refresh: bool = False):
         sys.exit(1)
 
     # --- Build lookup maps for commodity and currency price series by label ---
-    # We'll use these later when processing sectors and country_etfs
     commodity_series_by_label = {}
     for c in cfg.get("commodities", []):
         series = db.get_price_series(c["ticker"])
         if series:
             commodity_series_by_label[c["label"]] = series
     currency_series_by_label = {}
-    # Currency labels are the country names; we also have the code, but we key by label
-    # because the sector config uses the label string (e.g., "WTI Crude Oil")
     for c in cfg.get("currencies", []):
         series = db.get_price_series(c["ticker"])
         if series:
@@ -186,7 +191,6 @@ def run(full_refresh: bool = False):
         if fund:
             db.upsert_fundamentals(s["ticker"], fund["name"], fund["pe"], fund["pb"],
                                     fund["rating"], dt.datetime.now(timezone.utc).isoformat())
-        # Get commodity and currency series for this sector if they exist
         commodity_series = commodity_series_by_label.get(s.get("commodity")) if s.get("commodity") else None
         currency_series = currency_series_by_label.get(s.get("currency")) if s.get("currency") else None
         build_summary_row(f"sector:{s['ticker']}", "sector", s["label"], s["ticker"],
