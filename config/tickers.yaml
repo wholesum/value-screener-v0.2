@@ -303,7 +303,6 @@ fred_series:
   - {label: "Building Permits (Total)", series_id: "PERMIT"}
 
   # ---- Commercial Real Estate ----
-  - {label: "Green Street Commercial Property Price Index", series_id: "COMREPUSQ159N"}
   - {label: "Commercial Real Estate Price Index", series_id: "QUSR628BIS"}
 
   # ---- Farmland ----
