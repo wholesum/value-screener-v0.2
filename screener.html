@@ -146,7 +146,6 @@ function App() {
     { key:'ticker', header:'Ticker' },
     { key:'sector_deviation_pct', header:'Sector vs Hist', render: r => cheapBadge(r.sector_deviation_pct) },
     { key:'sector_commodity_ratio_deviation', header:'Sector / Commodity', render: r => cheapBadge(r.sector_commodity_ratio_deviation) },
-    { key:'sector_currency_ratio_deviation', header:'Sector / Currency', render: r => cheapBadge(r.sector_currency_ratio_deviation) },
     { key:'commodity_link', header:'Linked Commodity', render: r => r.commodity_link ? `${r.commodity_link} (${r.commodity_deviation_pct !== null ? r.commodity_deviation_pct.toFixed(1)+'%' : '—'})` : '—' },
     { key:'currency_link', header:'Linked Currency', render: r => r.currency_link ? `${r.currency_link} (${r.currency_deviation_pct !== null ? r.currency_deviation_pct.toFixed(1)+'%' : '—'})` : '—' },
     { key:'avg_deviation_pct', header:'Combined', render: r => cheapBadge(r.avg_deviation_pct) },
