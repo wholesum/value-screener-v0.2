@@ -1,18 +1,10 @@
 # ==============================================================================
 # SINGLE SOURCE OF TRUTH for every instrument this tool tracks.
-#
-# DISK BUDGET NOTE (read this if you're tight on space, e.g. PythonAnywhere's
-# free 512MB quota): the biggest lever on data/market.db size isn't the
-# number of tickers, it's how much HISTORY each one pulls. `history_start_date`
-# below caps every fetch to that date forward. At the current ~300 instruments
-# and a 16-year cap, expect market.db to land somewhere around 60-90MB --
-# comfortable headroom against a 512MB quota that's already ~250MB used by
-# installed packages. If you add a lot more tickers, shorten this date first.
 # ==============================================================================
 
 gold_ticker: "GC=F"
 gold_source: "yfinance"
-history_start_date: "2010-01-01"   # nothing before this date is fetched or kept
+history_start_date: "2010-01-01"
 
 # ------------------------------------------------------------------ sectors --
 sectors:
@@ -26,7 +18,10 @@ sectors:
   - {label: "Refiners", ticker: "CRAK", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: CAD}
   - {label: "Uranium (Global X)", ticker: "URA", source: stooq, stooq_kind: equity, commodity: null, currency: null}
   - {label: "Uranium Miners (Sprott)", ticker: "URNM", source: stooq, stooq_kind: equity, commodity: null, currency: null}
-  - {label: "Global Coal (COAL)", ticker: "COAL", source: stooq, stooq_kind: equity, commodity: "Coal", currency: USD}
+
+  # ---- Coal ----
+  - {label: "Global Coal (COAL)", ticker: "COAL", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+
   # ---- Metals & Mining ----
   - {label: "Metals & Mining", ticker: "XME", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: AUD}
   - {label: "Global Miners", ticker: "PICK", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: AUD}
@@ -68,13 +63,13 @@ sectors:
   - {label: "Medical Devices", ticker: "IHI", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
   - {label: "Pharmaceuticals", ticker: "PJP", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
 
-  # ---- Industrials (Airlines & Transportation now have no commodity link) ----
+  # ---- Industrials ----
   - {label: "Industrials (S&P)", ticker: "XLI", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
   - {label: "Infrastructure", ticker: "PAVE", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: USD}
   - {label: "Aerospace & Defense", ticker: "ITA", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
   - {label: "Defense (PPA)", ticker: "PPA", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
-  - {label: "Transportation", ticker: "IYT", source: stooq, stooq_kind: equity, commodity: null, currency: USD}      # removed oil link
-  - {label: "Airlines", ticker: "JETS", source: stooq, stooq_kind: equity, commodity: null, currency: USD}          # removed oil link
+  - {label: "Transportation", ticker: "IYT", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
+  - {label: "Airlines", ticker: "JETS", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
   - {label: "Autos", ticker: "CARZ", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
   - {label: "Electric Vehicles (DRIV)", ticker: "DRIV", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: USD}
   - {label: "Dry Bulk Shipping (BOAT)", ticker: "BOAT", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
@@ -110,16 +105,15 @@ sectors:
   - {label: "Solar (TAN)", ticker: "TAN", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
   - {label: "Water Resources (PHO)", ticker: "PHO", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
 
-  # ---- Rates (for the rates-vs-metals ratio) ----
+  # ---- Rates ----
   - {label: "20+ Year Treasuries (TLT)", ticker: "TLT", source: stooq, stooq_kind: equity, commodity: "Gold", currency: USD}
   - {label: "Inflation-Protected Treasuries (TIP)", ticker: "TIP", source: stooq, stooq_kind: equity, commodity: "Gold", currency: USD}
 
-  # ---- NEW: US Small Cap ----
   - {label: "US Small-Cap (IWM)", ticker: "IWM", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
 
-# -------------------------------------------------------------- country_etfs -
+# -------------------------------------------------------------- country_etfs --
 country_etfs:
-  # ---- Commodity exporters (positive correlation) ----
+  # ---- Commodity exporters ----
   - {label: "Canada", ticker: "EWC", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: CAD}
   - {label: "Australia", ticker: "EWA", source: stooq, stooq_kind: equity, commodity: "Iron Ore 62%", currency: AUD}
   - {label: "Brazil", ticker: "EWZ", source: stooq, stooq_kind: equity, commodity: "Soybeans", currency: BRL}
@@ -138,7 +132,7 @@ country_etfs:
   - {label: "Africa", ticker: "AFK", source: stooq, stooq_kind: equity, commodity: "Gold", currency: ZAR}
   - {label: "Switzerland", ticker: "EWL", source: stooq, stooq_kind: equity, commodity: "Gold", currency: CHF}
   
-  # ---- Non-commodity economies / importers (no commodity link) ----
+  # ---- Non-commodity economies ----
   - {label: "Japan", ticker: "EWJ", source: stooq, stooq_kind: equity, commodity: null, currency: JPY}
   - {label: "India", ticker: "INDA", source: stooq, stooq_kind: equity, commodity: null, currency: INR}
   - {label: "China", ticker: "FXI", source: stooq, stooq_kind: equity, commodity: null, currency: CNY}
@@ -164,11 +158,9 @@ country_etfs:
   - {label: "Asia-Pacific", ticker: "VPL", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
   - {label: "Latin America", ticker: "ILF", source: stooq, stooq_kind: equity, commodity: null, currency: BRL}
   - {label: "China A-shares", ticker: "KBA", source: stooq, stooq_kind: equity, commodity: null, currency: CNY}
-  - {label: "Frontier Markets", ticker: "FM", source: stooq, stooq_kind: equity, commodity: null, currency: USD}
 
 # ---------------------------------------------------------------------------
-# Commodity ETFs (equities, not futures) -- Stooq-fetchable alternate/
-# cross-check source for the same exposure as `commodities` below.
+# Commodity ETFs
 # ---------------------------------------------------------------------------
 commodity_etfs:
   - {label: "Broad Commodities (DBC)", ticker: "DBC", source: stooq, stooq_kind: equity}
@@ -180,9 +172,7 @@ commodity_etfs:
   - {label: "Palladium (PALL)", ticker: "PALL", source: stooq, stooq_kind: equity}
 
 # ---------------------------------------------------------------------------
-# Alt assets -- outside the commodity/currency/equity taxonomy, but the
-# Bitcoin-vs-gold ratio specifically is widely enough tracked (including by
-# Andy Hoese / Finding Value Finance) to be worth a dedicated small category.
+# Alt assets
 # ---------------------------------------------------------------------------
 alt_assets:
   - {label: "Bitcoin", ticker: "BTC-USD", source: yfinance}
@@ -245,7 +235,6 @@ currencies:
   - {code: PKR, label: "Pakistani Rupee", ticker: "PKRUSD=X", source: yfinance}
   - {code: BDT, label: "Bangladeshi Taka", ticker: "BDTUSD=X", source: yfinance}
   - {code: LKR, label: "Sri Lankan Rupee", ticker: "LKRUSD=X", source: yfinance}
-  # ---- NEW: US Dollar Index ----
   - {code: USDX, label: "US Dollar Index", ticker: "UUP", source: yfinance}
 
 # ---------------------------------------------------------------- commodities
@@ -283,7 +272,6 @@ commodities:
   - {label: "Butter", ticker: "CB=F", source: yfinance}
   - {label: "Cheese", ticker: "CSC=F", source: yfinance}
   - {label: "Lumber", ticker: "LBR=F", source: yfinance}
-  # ---- NEW: Long-dated oil futures and base metals basket ----
   - {label: "Oil (Long-Dated)", ticker: "USL", source: yfinance}
   - {label: "Brent Oil (Long-Dated)", ticker: "BNO", source: yfinance}
   - {label: "Base Metals Basket", ticker: "DBB", source: yfinance}
@@ -302,11 +290,6 @@ fred_series:
 
   # ---- Commercial Real Estate ----
   - {label: "Commercial Real Estate Price Index", series_id: "QUSR628BIS"}
-
-  # ---- Farmland ----
-  - {label: "Farm Real Estate Value", series_id: "FRBV"}
-  - {label: "Cropland Value", series_id: "CRLV"}
-  - {label: "Pastureland Value", series_id: "PTLV"}
 
   # ---- Construction Materials (PPI) ----
   - {label: "Lumber (PPI)", series_id: "WPU081"}
@@ -337,7 +320,6 @@ fred_series:
   - {label: "Petrochemicals (PPI)", series_id: "WPU0613"}
   - {label: "Nitrogen Fertilizer (PPI)", series_id: "WPU065201"}
   - {label: "Phosphate Fertilizer (PPI)", series_id: "WPU065202"}
-  - {label: "Potash Fertilizer (PPI)", series_id: "WPU065203"}
 
   # ---- Shipping / Freight ----
   - {label: "Cass Freight Index", series_id: "FRGSHPUSM649NCIS"}
@@ -345,16 +327,13 @@ fred_series:
   - {label: "Truck Transportation PPI", series_id: "PCU484484"}
   - {label: "Deep Sea Freight Transportation PPI", series_id: "PCU483111483111"}
 
-  # ---- IMF Spot Commodity Prices (monthly cross-check vs. futures above) ----
-  - {label: "Gold (IMF)", series_id: "PGOLDUSDM"}
-  - {label: "Silver (IMF)", series_id: "PSILVERUSDM"}
+  # ---- IMF Spot Commodity Prices ----
   - {label: "Copper (IMF)", series_id: "PCOPPUSDM"}
   - {label: "Aluminum (IMF)", series_id: "PALUMUSDM"}
   - {label: "Nickel (IMF)", series_id: "PNICKUSDM"}
   - {label: "Zinc (IMF)", series_id: "PZINCUSDM"}
   - {label: "Lead (IMF)", series_id: "PLEADUSDM"}
   - {label: "Tin (IMF)", series_id: "PTINUSDM"}
-  - {label: "Rubber (IMF)", series_id: "PRUBBERUSDM"}
   - {label: "Iron Ore (IMF)", series_id: "PIORECRUSDM"}
   - {label: "WTI Crude (IMF)", series_id: "POILWTIUSDM"}
   - {label: "Brent Crude (IMF)", series_id: "POILBREUSDM"}
