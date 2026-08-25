@@ -26,7 +26,7 @@ sectors:
   - {label: "Refiners", ticker: "CRAK", source: stooq, stooq_kind: equity, commodity: "WTI Crude Oil", currency: CAD}
   - {label: "Uranium (Global X)", ticker: "URA", source: stooq, stooq_kind: equity, commodity: null, currency: null}
   - {label: "Uranium Miners (Sprott)", ticker: "URNM", source: stooq, stooq_kind: equity, commodity: null, currency: null}
-
+  - {label: "Global Coal (COAL)", ticker: "COAL", source: stooq, stooq_kind: equity, commodity: "Coal", currency: USD}
   # ---- Metals & Mining ----
   - {label: "Metals & Mining", ticker: "XME", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: AUD}
   - {label: "Global Miners", ticker: "PICK", source: stooq, stooq_kind: equity, commodity: "Copper (COMEX)", currency: AUD}
