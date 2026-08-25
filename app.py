@@ -54,24 +54,13 @@ def dashboard():
 def convergence():
     """
     The 'asymmetric upside' screen: for each sector/country ETF, pull in the
-    deviation_pct of the commodity and currency it's linked to (via
-    config/tickers.yaml) and average them. All inputs are precomputed
-    summary rows -- this is just arithmetic, no external calls, so it's
-    safe to compute per-request.
-
-    Additionally, we now include the precomputed sector-vs-commodity and
-    sector-vs-currency deviations (stored in the sector's summary row) for
-    richer analysis.
+    deviation_pct of the commodity it's linked to (via config/tickers.yaml).
+    Currency links have been removed because the currency discount is already
+    baked into the country ETF price.
     """
     try:
         cfg = load_config()
         commodity_rows = {r["label"]: r for r in db.get_summary("commodity")}
-        # currency_rows keyed by label; also index by code for convenience
-        currency_by_code = {}
-        for c in cfg.get("currencies", []):
-            row = next((r for r in db.get_summary("currency") if r["key"] == f"currency:{c['code']}"), None)
-            if row:
-                currency_by_code[c["code"]] = row
 
         results = []
         for group_key in ("sector", "country_etf"):
@@ -82,17 +71,11 @@ def convergence():
                     continue
                 vals = [sec_row["deviation_pct"]]
                 commodity_dev = None
-                currency_dev = None
                 if entry.get("commodity"):
                     crow = commodity_rows.get(entry["commodity"])
                     if crow and crow["deviation_pct"] is not None:
                         commodity_dev = crow["deviation_pct"]
                         vals.append(commodity_dev)
-                if entry.get("currency"):
-                    crow = currency_by_code.get(entry["currency"])
-                    if crow and crow["deviation_pct"] is not None:
-                        currency_dev = crow["deviation_pct"]
-                        vals.append(currency_dev)
                 results.append({
                     "label": entry["label"],
                     "ticker": entry["ticker"],
@@ -100,20 +83,15 @@ def convergence():
                     "sector_deviation_pct": sec_row["deviation_pct"],
                     "commodity_link": entry.get("commodity"),
                     "commodity_deviation_pct": commodity_dev,
-                    "currency_link": entry.get("currency"),
-                    "currency_deviation_pct": currency_dev,
                     "avg_deviation_pct": sum(vals) / len(vals),
                     "n_factors": len(vals),
                     "sentiment_label": sec_row["sentiment_label"],
-                    # New fields: sector vs commodity and sector vs currency
                     "sector_commodity_ratio_deviation": sec_row.get("commodity_ratio_deviation_pct"),
-                    "sector_currency_ratio_deviation": sec_row.get("currency_ratio_deviation_pct"),
                 })
         results.sort(key=lambda r: r["avg_deviation_pct"])
         return jsonify(results)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 @app.route("/api/history/<path:key>")
 def history(key):
